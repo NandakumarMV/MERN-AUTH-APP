@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Admin from "../models/adminModel.js";
 import adminGenToken from "../utils/adminGentoken.js";
+import User from "../models/userModel.js";
 
 const authAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -49,9 +50,22 @@ const logoutAdmin = asyncHandler(async (req, res) => {
   res.status(200).json({ message: " admin logout" });
 });
 
-const listUserProfile = asyncHandler(async (req, res) => {});
+const listUserProfile = asyncHandler(async (req, res) => {
+  const userList = await User.find();
+
+  res.status(200).json({ userList });
+});
 
 const editUserProfile = asyncHandler(async (req, res) => {
+  const { userId, name, email } = req.body;
+
+  console.log(userId);
+  console.log(userId, name, email);
+  if (!userId) {
+    res.status(404);
+    throw new Error("user updation failed");
+  }
+
   res.status(200).json({ message: "editUserProfile" });
 });
 
