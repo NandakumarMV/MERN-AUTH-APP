@@ -65,23 +65,33 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+  console.log(req.body.email, req.body.name, req.file, "1st render");
+
+  console.log(user);
   if (user) {
+    console.log(req.body.email, req.body.name, "2nd");
     (user.email = req.body.email || user.email),
       (user.name = req.body.name || user.name);
+    if (req.file) {
+      console.log(req.file);
+      user.userImage = req.file.filename || user.userImage;
+    }
     if (req.body.password) {
+      console.log(req.body.password);
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
+    console.log(updatedUser, "aaa");
     res.status(200).json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      image: updatedUser.userImage,
     });
   } else {
     res.status(404);
     throw new Error("user not find");
   }
-  res.status(200).json({ message: " update user profile" });
 });
 export {
   authUser,

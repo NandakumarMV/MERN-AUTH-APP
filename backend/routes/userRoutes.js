@@ -16,6 +16,6 @@ router.post("/logout", logOutUser);
 router
   .route("/profile")
   .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
+  .put(protect, mullterUserImage.single("userImage"), updateUserProfile);
 
 export default router;

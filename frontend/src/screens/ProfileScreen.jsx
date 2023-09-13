@@ -14,6 +14,7 @@ const ProfileScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confrimPassword, setConfrimPassword] = useState("");
+  const [image, setImage] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,15 +32,21 @@ const ProfileScreen = () => {
       toast.error("Password not matching");
     } else {
       try {
-        const res = await updateProfile({
-          _id: userInfo._id,
-          name,
-          email,
-          password,
-        }).unwrap();
+        const formData = new FormData();
+        formData.append("_id", userInfo._id);
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("password", password);
+
+        console.log(image);
+        formData.append("userImage", image);
+
+        console.log(formData, "kkkk");
+        const res = await updateProfile(formData).unwrap("");
         dispatch(setCredentials({ ...res }));
         toast.success("Profile updated");
       } catch (err) {
+        console.log(err?.data?.message || err.error);
         toast.error(err?.data?.message || err.error);
       }
     }
@@ -82,6 +89,13 @@ const ProfileScreen = () => {
             placeholder="confrim password"
             value={confrimPassword}
             onChange={(e) => setConfrimPassword(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+        <Form.Group className="my-2" controlId="userImage">
+          <Form.Label>Profile Picture </Form.Label>
+          <Form.Control
+            type="file"
+            onChange={(e) => setImage(e.target.files[0])}
           ></Form.Control>
         </Form.Group>
         {isLoading && <Loader />}
