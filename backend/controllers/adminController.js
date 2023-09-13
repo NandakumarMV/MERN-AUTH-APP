@@ -53,26 +53,75 @@ const logoutAdmin = asyncHandler(async (req, res) => {
 const listUserProfile = asyncHandler(async (req, res) => {
   const userList = await User.find();
 
-  res.status(200).json({ userList });
+  res.status(200).json(userList);
 });
 
 const editUserProfile = asyncHandler(async (req, res) => {
   const { userId, name, email } = req.body;
 
-  console.log(userId);
   console.log(userId, name, email);
   if (!userId) {
     res.status(404);
     throw new Error("user updation failed");
   }
+  const user = await User.findById(userId);
 
+  if (!user) {
+    res.status(404);
+    throw new Error("user updation failed");
+  }
+  user.name = name;
+  user.email = email;
+
+  await user.save();
   res.status(200).json({ message: "editUserProfile" });
 });
 
+const deleteUserData = asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+  console.log(req.body.userId, "req body");
+  const delUser = await User.findByIdAndDelete(userId);
+  console.log(delUser, "deluser");
+  if (delUser) {
+    res.status(200).json({ message: "user deleted sucessfully" });
+  } else {
+    res.status(404).json({ message: "user not found" });
+  }
+});
+
+const blockUser = asyncHandler(async (req, res) => {
+  const userId = req.body.userId;
+  const blockTrue = {
+    isBlocked: true,
+  };
+  const blockUser = await User.findByIdAndUpdate(userId, blockTrue);
+  if (blockUser) {
+    res.status(200).json({ message: "user blocked sucessfully" });
+  } else {
+    res.status(404).json({ message: "user not found" });
+  }
+});
+const unblockUser = asyncHandler(async (req, res) => {
+  const userId = req.body.userId;
+  console.log(req.body.userId, "req.body.userId");
+  const unblockFalse = {
+    isBlocked: false,
+  };
+  const blockUser = await User.findByIdAndUpdate(userId, unblockFalse);
+
+  if (blockUser) {
+    res.status(200).json({ message: "user unblocked sucessfully" });
+  } else {
+    res.status(404).json({ message: "user not found" });
+  }
+});
 export {
   authAdmin,
   registerAdmin,
   editUserProfile,
   logoutAdmin,
   listUserProfile,
+  deleteUserData,
+  blockUser,
+  unblockUser,
 };

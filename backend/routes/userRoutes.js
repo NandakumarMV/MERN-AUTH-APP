@@ -1,5 +1,6 @@
 import express from "express";
 const router = express.Router();
+import { mullterUserImage } from "../config/multerConfig.js";
 import { protect } from "../middleware/authMiddleware.js";
 import {
   authUser,

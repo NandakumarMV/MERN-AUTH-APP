@@ -5,13 +5,16 @@ import genToken from "../utils/genToken.js";
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (user && (await user.matchPassword(password))) {
+  if (user && !user.isBlocked && (await user.matchPassword(password))) {
     genToken(res, user._id);
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
     });
+  } else if (user.isBlocked) {
+    res.status(400);
+    throw new Error("You have been blocked");
   } else {
     res.status(400);
     throw new Error("invalid email or password");

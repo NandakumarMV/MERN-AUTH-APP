@@ -6,6 +6,7 @@ import FormContainer from "../components/FormContainer";
 import { useAdminLoginMutation } from "../slices/adminApiSlice";
 import { setAdminCredentials } from "../slices/AdminSlice";
 import { toast } from "react-toastify";
+
 const AdminLoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +19,7 @@ const AdminLoginScreen = () => {
 
   useEffect(() => {
     if (adminInfo) {
-      navigate("/");
+      navigate("/admin");
     }
   }, [navigate, adminInfo]);
   const submitHandler = async (e) => {
@@ -26,7 +27,7 @@ const AdminLoginScreen = () => {
     try {
       const res = await adminLogin({ email, password }).unwrap();
       dispatch(setAdminCredentials({ ...res }));
-      navigate("/");
+      navigate("/admin");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
